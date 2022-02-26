@@ -88,4 +88,4 @@ block.height = 12;
 block.validate();
 block.getBData();
 
-module.exports.Block = Block; // Exposing the Block class as a module
+module.exports = Block; // Exposing the Block class as a module
