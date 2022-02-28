@@ -72,9 +72,11 @@ class Blockchain {
       try {
         //validate the block if resolved height ++ else rejected with the try catch
         block.validate();
+        this.chain.push(block);
+        this.validateChain();
         this.height++;
         console.log(this.height);
-        resolve();
+        resolve(block);
       } catch {
         reject(new Error("Invalid"));
       }
