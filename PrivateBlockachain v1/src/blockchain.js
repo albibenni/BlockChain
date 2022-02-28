@@ -223,8 +223,4 @@ class Blockchain {
   }
 }
 
-const block = new Block("hello");
-const blockchain = new Blockchain();
-blockchain._addBlock(block);
-
 module.exports.Blockchain = Blockchain;

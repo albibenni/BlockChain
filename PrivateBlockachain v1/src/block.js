@@ -81,11 +81,4 @@ class Block {
   }
 }
 
-let block = new Block("hello");
-this.body = Buffer.from(JSON.stringify("hello")).toString("hex");
-block.hash = SHA256(JSON.stringify(this.body)).toString();
-block.height = 12;
-block.validate();
-block.getBData();
-
 module.exports = Block; // Exposing the Block class as a module
