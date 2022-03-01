@@ -23,7 +23,7 @@ class Blockchain {
    */
   constructor() {
     this.chain = [];
-    this.height = 0;
+    this.height = -1;
     this.initializeChain();
   }
 
@@ -63,17 +63,17 @@ class Blockchain {
   _addBlock(block) {
     let self = this;
     return new Promise(async (resolve, reject) => {
-      if (block.height !== 0) {
+      const height = await self.getChainHeight();
+      if (height !== 0) {
         block.previousBlockHash = this.chain[block.height--].hash;
       }
-      block.height = this.height;
+      block.height = self.height + 1;
       block.time = new Date().getTime().toString().slice(0, -3);
       block.hash = SHA256(JSON.stringify(block.body)).toString();
+      //validate the block if resolved height ++ else rejected with the try catch
+      this.chain.push(block);
       try {
-        //validate the block if resolved height ++ else rejected with the try catch
-        block.validate();
-        this.chain.push(block);
-        this.validateChain();
+        await self.validateChain();
         this.height++;
         console.log(this.height);
         resolve(block);
@@ -154,7 +154,7 @@ class Blockchain {
       if (!result) reject(new Error("No Block with hash: " + hash));
       else {
         console.log("block found");
-        resolve("Found");
+        resolve(result);
       }
     });
   }
@@ -187,14 +187,16 @@ class Blockchain {
     let stars = [];
     return new Promise((resolve, reject) => {
       self.chain.forEach(async (b) => {
-        let data = await b.getBData();
-        if (data) {
-          if (data.owner === address) {
-            stars.push(data);
+        try {
+          let data = await b.getBData();
+          if (data) {
+            if (data.owner === address) {
+              stars.push(data);
+            }
           }
-        }
+          resolve(stars);
+        } catch (error) {}
       });
-      resolve(stars);
     });
   }
 
@@ -213,7 +215,6 @@ class Blockchain {
           (await b.validate())
             ? true
             : errorLog.push("Genesis block does not validate");
-          // errorLog.push("Genesis block does not validate")
         } else if (b.previousBlockHash === self.chain[b.height - 1].hash) {
           (await b.validate())
             ? true
