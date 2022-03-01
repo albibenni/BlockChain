@@ -49,9 +49,9 @@ class Block {
       // Returning the Block is not valid
       // Returning the Block is valid
       if (currentBlockHash !== recalculatedBlockHash) {
-        reject(new Error("Invalid"));
+        return false;
       } else {
-        resolve(self);
+        return true;
       }
     });
   }
