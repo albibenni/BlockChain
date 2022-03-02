@@ -64,27 +64,28 @@ class Blockchain {
     let self = this;
     return new Promise(async (resolve, reject) => {
       const height = await self.getChainHeight();
+      const BlockObj = block;
       if (height >= 0) {
-        block.height = self.height + 1;
-        block.time = new Date().getTime().toString().slice(0, -3);
-        block.hash = SHA256(JSON.stringify(block.body)).toString();
-        block.previousBlockHash = self.chain[self.height];
+        BlockObj.height = self.height + 1;
+        BlockObj.time = new Date().getTime().toString().slice(0, -3);
+        BlockObj.hash = SHA256(JSON.stringify(BlockObj)).toString();
+        BlockObj.previousBlockHash = self.chain[self.height];
         //validate the block if resolved height ++ else rejected with the try catch
-        this.chain.push(block);
+        self.chain.push(block);
         try {
           await self.validateChain();
-          this.height++;
-          console.log(this.height);
-          resolve(block);
+          self.height++;
+          console.log(self.height);
+          resolve(BlockObj);
         } catch {
           reject(new Error("Invalid"));
         }
       } else {
-        block.height = height + 1;
-        block.hash = SHA256(JSON.stringify(BlockObj)).toString();
-        self.chain.push(block);
+        BlockObj.height = height + 1;
+        BlockObj.hash = SHA256(JSON.stringify(BlockObj)).toString();
+        self.chain.push(BlockObj);
         self.height = self.chain.length - 1;
-        resolve(block);
+        resolve(BlockObj);
       }
     });
   }
