@@ -79,6 +79,12 @@ class Blockchain {
         } catch {
           reject(new Error("Invalid"));
         }
+      } else {
+        block.height = height + 1;
+        block.hash = SHA256(JSON.stringify(BlockObj)).toString();
+        self.chain.push(block);
+        self.height = self.chain.length - 1;
+        resolve(block);
       }
     });
   }
